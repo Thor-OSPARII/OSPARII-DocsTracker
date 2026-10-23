@@ -1,4 +1,4 @@
-const SPREADSHEET_ID = "https://docs.google.com/spreadsheets/d/1wgFHU_wVpVf7h8aHpgX7O4XVFV6Falx9Cq2M_2qICBs/edit?gid=0#gid=0";
+const SPREADSHEET_ID = "1wgFHU_wVpVf7h8aHpgX7O4XVFV6Falx9Cq2M_2qICBs";
 const SHEET_NAME = "Records";
 
 /**
