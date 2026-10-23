@@ -92,4 +92,68 @@ document.querySelector('#page-dashboard .layout').insertAdjacentHTML('beforebegi
 document.querySelector('#page-receive .panel-head p').textContent='Create a digital intake record for documents processed by OSPAR II Accounting.';
 // Use today's date for new intake; sample records are clearly labelled as demonstration data.
 document.getElementById('dateReceived').value=new Date().toISOString().slice(0,10);renderSteps('joSteps',workflows['JO Salary']);renderSteps('trainingSteps',workflows['Training Reimbursement']);renderTable('dashTable');renderAllFiltered();renderSide();updateStats();fillUpdateSelect();
-</script></body></html>
+</script>
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbyjl7s2T-ClJxtkEQ8J8ksyVTfILGtPCOZ5dssjWq9zJM-4_3Dm6Sz4FJzmMHcYFw5f/exec";
+
+// Load records from Google Sheets
+function loadRecords() {
+  const callbackName =
+    "docsTrackerCallback_" + Date.now();
+
+  window[callbackName] = function (result) {
+    try {
+      if (!result.success) {
+        console.error("Unable to load records");
+        return;
+      }
+
+      console.log("Records loaded:", result.records);
+
+      // TODO: Display result.records in your existing table.
+      // Map the fields to the actual columns used by your website.
+    } finally {
+      delete window[callbackName];
+      script.remove();
+    }
+  };
+
+  const script = document.createElement("script");
+  script.src =
+    API_URL +
+    "?callback=" +
+    encodeURIComponent(callbackName);
+
+  script.onerror = function () {
+    delete window[callbackName];
+    script.remove();
+    console.error("Failed to connect to Google Sheets");
+  };
+
+  document.body.appendChild(script);
+}
+
+// Save a new record to Google Sheets
+async function saveRecord(record) {
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(record)
+    });
+
+    // no-cors cannot confirm whether the server saved the record.
+    // Verify by reloading records or checking the spreadsheet.
+    console.log("Save request sent");
+  } catch (error) {
+    console.error("Save request failed:", error);
+  }
+}
+
+// Load when the page opens
+document.addEventListener("DOMContentLoaded", loadRecords);
+
+</body></html>
